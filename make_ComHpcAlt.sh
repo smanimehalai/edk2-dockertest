@@ -11,7 +11,7 @@ DEVEL_MODE=0
 # Firmware Version
 #
   VER=2.10
-  BUILD=100.02_Docker_Test
+  BUILD=100.02_Docker_Test1
 # DEBUG=0
 
 . adlink-platforms/Platform/Ampere/ComHpcAltPkg/edk2_adlink-ampere-altra/tools/make_adlink.sh ComHpcAlt A2
