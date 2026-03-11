@@ -7,6 +7,10 @@ pipeline {
         }
     }
 
+    environment {
+        BUILD_OUTPUT_DIR = "${WORKSPACE}"
+    }
+
     options {
         disableConcurrentBuilds()
         timestamps()
@@ -29,9 +33,31 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Update Submodules') {
             steps {
-                sh 'bash make_ComHpcAlt.sh'
+                withCredentials([usernamePassword(
+                    credentialsId: 'github-edkii',
+                    usernameVariable: 'GIT_USER',
+                    passwordVariable: 'GIT_TOKEN'
+                )]) {
+                    sh '''
+                    git config --global url."https://${GIT_USER}:${GIT_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+                    cd ${BUILD_OUTPUT_DIR}
+
+                    # this script handles all submodule updates
+                    bash setup_git.sh
+                    '''
+                }
+            }
+        }
+
+        stage('Build EDK2') {
+            steps {
+                sh '''
+                cd ${BUILD_OUTPUT_DIR}
+                bash make_ComHpcAlt.sh
+                '''
             }
         }
     }
